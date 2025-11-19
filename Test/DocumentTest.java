@@ -93,6 +93,7 @@ public class DocumentTest {
             os.connect(is);
 
             document.write(os);
+            os.close();
             byte[] b = new byte[500];
             int n = is.read(b);
 
