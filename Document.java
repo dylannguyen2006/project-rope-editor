@@ -29,13 +29,17 @@ public class Document {
         // TODO - your code here
         ropes.clear();
         try {
-            Scanner sc = new Scanner(is);   
+            StringBuilder sb = new StringBuilder();
+            Scanner sc = new Scanner(is);  
             while (sc.hasNextLine()) {
-                String line = sc.nextLine();
-                Rope rope = makeWordRope(line); 
+                sb.append(sc.nextLine()).append('\n');
+            }
+            sc.close();
+            String[] lines = sb.toString().split("\n", -1);
+            for (String line : lines) {
+                Rope rope = makeWordRope(line);
                 ropes.add(rope);
             }
-            ropes.add(null);
             return true;
         } catch (Exception e) {
             return false;
@@ -140,7 +144,7 @@ public class Document {
                 sb.append(rope.collect());
             }
             if (i < ropes.size() - 1) {
-                sb.append('\n');
+                sb.append("\n");
             }
         }
         return sb.toString();
