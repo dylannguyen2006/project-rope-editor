@@ -1,11 +1,8 @@
 import java.util.HashMap;
 
 public final class Rope {
-    /**
-     * These instance variables are declared final to make the Rope
-     * data structure immutable, ie. they can't be changed after they've
-     * been assigned once in the constructor.
-     */
+    // For leaves: data != null, left == right == null, weight = data.length()
+    // For internal nodes: data == null, left/right != null, weight = totalWeight(left)
     public final String data;
     public final Rope left;
     public final Rope right;
@@ -13,15 +10,11 @@ public final class Rope {
 
     /**
      * Create leaf Rope from string data
-     * Data cannot be null and cannot be the empty string
+     * Data cannot be null or empty
      */
     public Rope(String data) {
-        // TODO - your code here
-        if (data == null) {
-            throw new IllegalArgumentException("Data cannot be null");
-        }
-        if (data.length() == 0) {
-            throw new IllegalArgumentException("Data cannot be empty string");
+        if (data == null || data.length() == 0) {
+            throw new IllegalArgumentException("Data cannot be null or empty");
         }
         this.data = data;
         this.left = null;
@@ -35,7 +28,6 @@ public final class Rope {
      * Left and right ropes cannot be null.
      */
     public Rope(Rope left, Rope right) {
-        // TODO - your code here
         if (left == null || right == null) {
             throw new IllegalArgumentException("Left and right ropes cannot be null");
         }
@@ -47,18 +39,14 @@ public final class Rope {
 
     /**
      * Print the rope out. Useful for debugging
+     * Format: (weight data left right)
      */
+    @Override
     public String toString() {
-        String leftString = "";
-        if (left != null) {
-            leftString = left.toString();
-        }
-        String rightString = "";
-        if (right != null) {
-            rightString = right.toString();
-        }
-        return "(" + weight + "," + data + ",(" + leftString + "),"
-            + "(" + rightString + ")";
+        String d = (data == null ? "null" : data);
+        String l = (left == null ? "null" : left.toString());
+        String r = (right == null ? "null" : right.toString());
+        return "(" + weight + " " + d + " " + l + " " + r + ")";
     }
 
     /**
@@ -66,17 +54,17 @@ public final class Rope {
      * both the left and right ropes
      */
     public int totalWeight() {
-        // TODO - your code here
-        if (isLeaf()) {   
+        if (isLeaf()) {
             return weight;
         }
-        int rightWeight;
-        if (right == null) {
-            rightWeight = 0;
-        } else {
-            rightWeight = right.totalWeight();  
-        }
-        return weight + rightWeight;   // left weight + right weight ( weight is left weight)
+        return weight + right.totalWeight();
+    }
+
+    /**
+     * Return true if this node is a leaf node, false otherwise
+     */
+    public boolean isLeaf() {
+        return left == null && right == null;
     }
 
     /**
@@ -85,11 +73,10 @@ public final class Rope {
      * Concatenating a null rope has no effect.
      */
     public Rope concat(Rope other) {
-        // TODO - your code here
-        if (other == null) {   
+        if (other == null) {
             return this;
         }
-        return new Rope(this, other);   // create new parent rope
+        return new Rope(this, other);
     }
 
     /**
@@ -97,8 +84,7 @@ public final class Rope {
      * This is a convenience wrapper over the concat function.
      */
     public Rope add(String data) {
-        // TODO - your code here
-        if (data == null || data.length() == 0) {  // empty string
+        if (data == null || data.length() == 0) {
             return this;
         }
         Rope leaf = new Rope(data);
@@ -106,31 +92,20 @@ public final class Rope {
     }
 
     /**
-     * Return true if this node is a leaf node, false otherwise
-     */
-    public boolean isLeaf() {
-        // TODO - your code here
-        return left == null && right == null;
-    }
-
-    /**
      * Find the char at a particular node
      */
     public char charAt(int i) {
-        // TODO - your code here
-        int totalWeight = totalWeight();
-        if (i < 0 || i >= totalWeight) {
+        int total = totalWeight();
+        if (i < 0 || i >= total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (isLeaf()) {
-            return data.charAt(i);   // return the char in leaf node
+            return data.charAt(i);
         }
         if (i < weight) {
-            return left.charAt(i);   // get char from left rope
+            return left.charAt(i);
         } else {
-            return right.charAt(i - weight); 
-            // get char from right rope.
-            //  i - weight to adjust index
+            return right.charAt(i - weight);
         }
     }
 
@@ -139,20 +114,10 @@ public final class Rope {
      * from left and right ropes.
      */
     public String collect() {
-        // TODO - your code here
         if (isLeaf()) {
             return data;
         }
-        String leftStr = "";
-        String rightStr = "";
-
-        if (left != null) {
-            leftStr = left.collect();
-        }
-        if (right != null) {
-            rightStr = right.collect();
-        } 
-        return leftStr + rightStr;
+        return left.collect() + right.collect();
     }
 
     /**
@@ -161,31 +126,30 @@ public final class Rope {
      * index 2 would return the rope "refly"
      */
     public Rope tail(int i) {
-        // TODO - your code here
-        int totalWeight = totalWeight();
-        if (i < 0 || i > totalWeight) {
+        int total = totalWeight();
+        if (i < 0 || i > total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (i == 0) {
+            // must return the exact same object (tests use ==)
             return this;
         }
-        if (i == totalWeight) {   // empty substring
+        if (i == total) {
             return null;
         }
-        if (isLeaf()) {   // if leaf node, return substring from i to end
-            String sub = data.substring(i);   
+
+        if (isLeaf()) {
+            String sub = data.substring(i);
             if (sub.length() == 0) {
                 return null;
             }
-            return new Rope(sub);  
-        }      
-        // if i is in left rope, get tail from
-        // left rope and concatenate with right rope
+            return new Rope(sub);
+        }
 
-        if (i < weight) {   
+        if (i < weight) {
             Rope newLeft = left.tail(i);
             if (newLeft == null) {
-                return right;
+                return right;           // share right
             }
             return new Rope(newLeft, right);
         } else if (i == weight) {
@@ -201,7 +165,6 @@ public final class Rope {
      * index 2 would return the rope "fi"
      */
     public Rope head(int i) {
-        // TODO - your code here
         int total = totalWeight();
         if (i < 0 || i > total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
@@ -212,16 +175,19 @@ public final class Rope {
         if (i == total) {
             return this;
         }
+
         if (isLeaf()) {
             String sub = data.substring(0, i);
-            if (sub.isEmpty()) {
+            if (sub.length() == 0) {
                 return null;
             }
             return new Rope(sub);
         }
+
         if (i < weight) {
             return left.head(i);
         } else if (i == weight) {
+            // can reuse the whole left subtree
             return left;
         } else {
             Rope rightHead = right.head(i - weight);
@@ -237,16 +203,15 @@ public final class Rope {
      * This is a wrapper around the head and tail functions.
      */
     public Rope subrope(int start, int end) {
-        // TODO - your code here
         int total = totalWeight();
         if (start < 0 || end < start || end > total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (start == end) {
-            return null; //empty substring
+            return null;
         }
-        Rope t = this.tail(start);   // get tail from start to end
-        if (t == null) {  
+        Rope t = tail(start);
+        if (t == null) {
             return null;
         }
         return t.head(end - start);
@@ -260,31 +225,31 @@ public final class Rope {
      * and it gets deleted.
      */
     public Rope delete(int i) {
-        // TODO - your code here
         int total = totalWeight();
         if (i < 0 || i >= total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
         }
-        if (isLeaf()) { 
-            StringBuilder sb = new StringBuilder(data);
-            sb.deleteCharAt(i);   // delete char at index i
-            if (sb.length() == 0) {   // return null if empty string
+
+        if (isLeaf()) {
+            String newData = data.substring(0, i) + data.substring(i + 1);
+            if (newData.length() == 0) {
                 return null;
             }
-            return new Rope(sb.toString());  // create new rope with updated string after delete
+            return new Rope(newData);
         }
-        if (i < weight) {  // i < weight, delete from left rope
+
+        if (i < weight) {
             Rope newLeft = left.delete(i);
             if (newLeft == null) {
-                return right;
+                return right;           // share right
             }
             return new Rope(newLeft, right);
-        } else {   // i >= weight, delete from right rope
+        } else {
             Rope newRight = right.delete(i - weight);
             if (newRight == null) {
-                return left;
+                return left;            // share left
             }
-            return new Rope(left, newRight);  
+            return new Rope(left, newRight);
         }
     }
 
@@ -292,7 +257,6 @@ public final class Rope {
      * Insert a rope at index i
      */
     public Rope insert(Rope other, int i) {
-        // TODO - your code here
         int total = totalWeight();
         if (i < 0 || i > total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
@@ -300,25 +264,21 @@ public final class Rope {
         if (other == null) {
             return this;
         }
-        Rope leftSide = head(i);
-        Rope rightSide = tail(i);
 
-        Rope result = null;
-        if (leftSide != null) {
-            result = leftSide;
-        }
-        if (result == null) {
+        Rope leftPart = head(i);
+        Rope rightPart = tail(i);
+
+        Rope result;
+        if (leftPart == null) {
             result = other;
         } else {
-            result = result.concat(other);
+            result = leftPart.concat(other);
         }
-        if (rightSide != null) {
-            if (result == null) {
-                result = rightSide;
-            } else {
-                result = result.concat(rightSide);
-            }
+
+        if (rightPart != null) {
+            result = result.concat(rightPart);
         }
+
         return result;
     }
 
@@ -326,9 +286,7 @@ public final class Rope {
      * Reduce the rope to its most space efficient form
      */
     public Rope reduce() {
-        // TODO - your code here
-        HashMap<String, Rope> map = new HashMap<>();  
-        return reduceString(this, map);
+        return reduceString(this, new HashMap<String, Rope>());
     }
 
     // helper function for reduce
@@ -337,17 +295,16 @@ public final class Rope {
             return null;
         }
         if (node.isLeaf()) {
-            // using map to store already existing leaf nodes
-            Rope exist = map.get(node.data); 
-            if (exist != null) {  // if already exists, return
+            Rope exist = map.get(node.data);
+            if (exist != null) {
                 return exist;
             } else {
-                map.put(node.data, node);   // if not, add to map
+                map.put(node.data, node);
                 return node;
             }
         }
-        Rope newLeft = reduceString(node.left, map);   // reduce left subtree
-        Rope newRight = reduceString(node.right, map);  // reduce right subtree
-        return new Rope(newLeft, newRight);  // create new parent rope
+        Rope newLeft = reduceString(node.left, map);
+        Rope newRight = reduceString(node.right, map);
+        return new Rope(newLeft, newRight);
     }
 }

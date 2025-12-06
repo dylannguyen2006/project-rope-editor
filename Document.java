@@ -19,7 +19,7 @@ public class Document {
      */
     public Document() {
         // TODO - your code here
-        this.ropes = new ArrayList<>();
+        ropes = new ArrayList<>();
     }
 
     /**
