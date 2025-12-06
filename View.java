@@ -36,7 +36,7 @@ public class View {
             }
 
             for (int c = 0; c < line.length(); c++) {
-                gui.drawCharacter(i, c, line.charAt(c), "WHITE", "BLACK");   // default colors WHITE on BLACK
+                gui.drawCharacter(c, i, line.charAt(c), "WHITE", "BLACK");   // default colors WHITE on BLACK
             }
         }
 
@@ -156,21 +156,26 @@ public class View {
             if (line == null) {
                 return;
             }
-            int length = line.totalWeight();
-            if (length == 0) {
-                return;
-            }
             int deleteIndex = col - 1;
-            Rope newLine = line.head(deleteIndex);
-            
+            Rope left = line.head(deleteIndex);   // 0 to deleteIndex - 1
+            Rope right = line.tail(col);   // col to end
+
+            Rope newLine = null;
+            if (left != null && right != null) {
+                newLine = left.concat(right);
+            } else if (left != null) {
+                newLine = left;
+            } else if (right != null) {
+                newLine = right;
+            }
             document.set(row, newLine);
             col--;
             return;
         }
-
         if (row == 0) {
             return;
         }
+
         Rope currLine = document.get(row);   // current line
         Rope prevLine = document.get(row - 1);   // previous line
         Rope mergedLine;   // merged line after deletion
@@ -181,12 +186,10 @@ public class View {
         } else {
             mergedLine = prevLine.concat(currLine);
         }
-        int newCol;
-        if (mergedLine == null) {
-            newCol = 0;
-        } else {
-            newCol = mergedLine.totalWeight();   // move cursor to end of previous line
-        }
+        int newCol = 0;
+        if (prevLine != null) {
+            newCol = prevLine.totalWeight();
+        } 
         document.set(row - 1, mergedLine);
         document.delete(row);   // delete current row
         row--;
