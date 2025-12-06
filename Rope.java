@@ -289,7 +289,7 @@ public final class Rope {
     public Rope insert(Rope other, int i) {
         // TODO - your code here
         int total = totalWeight();
-        if (i < 0 || i >= total) {
+        if (i < 0 || i > total) {
             throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (other == null) {
