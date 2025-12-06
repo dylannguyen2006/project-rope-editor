@@ -37,8 +37,7 @@ public class Document {
             sc.close();
             String[] lines = sb.toString().split("\n", -1);
             for (String line : lines) {
-                Rope rope = makeWordRope(line);
-                ropes.add(rope);
+                ropes.add(makeWordRope(line));
             }
             return true;
         } catch (Exception e) {
