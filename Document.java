@@ -1,7 +1,7 @@
-import java.util.ArrayList;
-import java.util.Scanner;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -19,6 +19,7 @@ public class Document {
      */
     public Document() {
         // TODO - your code here
+        this.ropes = new ArrayList<>();
     }
 
     /**
@@ -26,13 +27,24 @@ public class Document {
      */
     public boolean read(InputStream is) {
         // TODO - your code here
-        return true;
+        ropes.clear();
+        try {
+            Scanner sc = new Scanner(is);   
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                Rope rope = makeWordRope(line); 
+                ropes.add(rope);
+            }
+            ropes.add(null);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
      * Create a rope made up of words from a string by concatenating
      * words from the string. Return null on an empty string.
-     *
      * E.g a string "Fee fi" will result in a rope like this:
      *                    +
      *               ------------
@@ -44,7 +56,37 @@ public class Document {
      */
     public Rope makeWordRope(String line) {
         // TODO - your code here
-        return null;
+        if (line == null || line.isEmpty()) { 
+            return null;
+        }
+
+        Rope result = null;
+        int n = line.length();
+        int i = 0;
+
+        while (i < n) {
+            char c = line.charAt(i);
+            boolean isSpace = Character.isWhitespace(c);
+
+            // find the next token (word or whitespace)
+            int j = i + 1;
+            while (j < n && Character.isWhitespace(line.charAt(j)) == isSpace) {
+                j++;
+            }
+
+            String token = line.substring(i, j);
+            Rope piece = new Rope(token);
+
+            if (result == null) {
+                result = piece;
+            } else {
+                result = result.concat(piece);   // concatenate the new piece
+            }
+
+            i = j;
+        }
+
+        return result;
     }
 
     /**
@@ -57,7 +99,7 @@ public class Document {
             if (rope != null) {
                 line = rope.collect();
             }
-            System.out.println((i+1) + ":" + line);
+            System.out.println((i + 1) + ":" + line);
         }
     }
 
@@ -66,7 +108,24 @@ public class Document {
      */
     public boolean write(OutputStream os) {
         // TODO - your code here
-        return false;
+        try {
+            PrintStream ps = new PrintStream(os);
+
+            for (int i = 0; i < ropes.size(); i++) {
+                Rope rope = ropes.get(i);
+                if (rope != null) {
+                    ps.print(rope.collect());
+                }
+                // print newline except for last line
+                if (i < ropes.size() - 1) {
+                    ps.println();
+                }
+            }
+            ps.flush();
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -74,7 +133,17 @@ public class Document {
      */
     public String collect() {
         // TODO - your code here
-        return "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < ropes.size(); i++) {
+            Rope rope = ropes.get(i);
+            if (rope != null) {
+                sb.append(rope.collect());
+            }
+            if (i < ropes.size() - 1) {
+                sb.append('\n');
+            }
+        }
+        return sb.toString();
     }
 
     /**
@@ -82,7 +151,7 @@ public class Document {
      */
     public int rows() {
         // TODO - your code here
-        return 0;
+        return ropes.size();
     }
 
     /**
@@ -90,14 +159,15 @@ public class Document {
      */
     public Rope get(int i) {
         // TODO - your code here
-        return null;
+        return ropes.get(i);
     }
 
     /**
      * Set the rope at line i
      */
     public void set(int i, Rope rope) {
-        // TODO - your code here
+        // TODO - your code here\
+        ropes.set(i, rope);
     }
 
     /**
@@ -105,13 +175,7 @@ public class Document {
      */
     public void add(Rope rope) {
         // TODO - your code here
-    }
-
-    /**
-     * Delete row i in the document
-     */
-    public void delete(int i) {
-        // TODO - your code here
+        ropes.add(rope);
     }
 
     /**
@@ -119,5 +183,16 @@ public class Document {
      */
     public void add(int i, Rope rope) {
         // TODO - your code here
+        ropes.add(i, rope);
     }
+
+    /**
+     * Delete row i in the document
+     */
+    public void delete(int i) {
+        // TODO - your code here
+        ropes.remove(i);
+    }
+
+    
 }

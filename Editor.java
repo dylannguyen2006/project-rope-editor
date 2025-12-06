@@ -24,6 +24,8 @@ public class Editor {
                 view.draw();
                 gui.refresh();
 
+                view.draw();
+
                 int c = 0;
                 while ((c = gui.getKeypress()) == 0) {
                     gui.sleep(10);
@@ -31,6 +33,30 @@ public class Editor {
                 switch (c) {
                 case Gui.ESCAPE_KEY:
                     quit = true;
+                    break;
+
+                case Gui.UP_ARROW_KEY:
+                    view.moveUp();
+                    break;
+
+                case Gui.DOWN_ARROW_KEY:
+                    view.moveDown();
+                    break;
+
+                case Gui.LEFT_ARROW_KEY:
+                    view.moveLeft();
+                    break;
+
+                case Gui.RIGHT_ARROW_KEY:
+                    view.moveRight();
+                    break;
+
+                case Gui.BACKSPACE_KEY:
+                    view.delete();
+                    break;
+
+                case Gui.ENTER_KEY:
+                    view.linebreak();
                     break;
 
                 default:
