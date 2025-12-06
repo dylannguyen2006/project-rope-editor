@@ -168,7 +168,7 @@ public class Gui {
         String foregroundColor, String backgroundColor) {
         TextColor foregroundTextColor = toTextColor(foregroundColor);
         TextColor backgroundTextColor = toTextColor(backgroundColor);
-        screen.setCharacter(y, x, new TextCharacter(c, foregroundTextColor,
+        screen.setCharacter(x, y, new TextCharacter(c, foregroundTextColor,
           backgroundTextColor));
     }
 
