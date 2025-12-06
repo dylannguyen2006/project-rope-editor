@@ -18,7 +18,9 @@ public final class Rope {
      */
     public Rope(String data) {
         // TODO - your code here
-        // replace these initializers
+        if (data == null || data.length() == 0) {
+            throw new IllegalArgumentException("");
+        }
         this.data = data;
         this.left = null;
         this.right = null;
@@ -32,7 +34,9 @@ public final class Rope {
      */
     public Rope(Rope left, Rope right) {
         // TODO - your code here
-        // replace these initializers
+        if (left == null || right == null) {
+            throw new IllegalArgumentException("");
+        }
         this.data = null;
         this.left = left;
         this.right = right;
@@ -64,14 +68,13 @@ public final class Rope {
         if (isLeaf()) {   
             return weight;
         }
-        int leftWeight = 0;
-        int rightWeight = 0;
+        int rightWeight;
         if (right == null) {
             rightWeight = 0;
         } else {
             rightWeight = right.totalWeight();  
         }
-        return weight + right.totalWeight();   // left weight + right weight ( weight is left weight)
+        return weight + rightWeight;   // left weight + right weight ( weight is left weight)
     }
 
     /**
@@ -105,10 +108,7 @@ public final class Rope {
      */
     public boolean isLeaf() {
         // TODO - your code here
-        if (left == null && right == null) {
-            return true;
-        }
-        return false;
+        return left == null && right == null;
     }
 
     /**
