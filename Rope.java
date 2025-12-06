@@ -18,10 +18,10 @@ public final class Rope {
     public Rope(String data) {
         // TODO - your code here
         if (data == null) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Data cannot be null");
         }
         if (data.length() == 0) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Data cannot be empty string");
         }
         this.data = data;
         this.left = null;
@@ -37,7 +37,7 @@ public final class Rope {
     public Rope(Rope left, Rope right) {
         // TODO - your code here
         if (left == null || right == null) {
-            throw new IllegalArgumentException("");
+            throw new IllegalArgumentException("Left and right ropes cannot be null");
         }
         this.data = null;
         this.left = left;
@@ -120,7 +120,7 @@ public final class Rope {
         // TODO - your code here
         int totalWeight = totalWeight();
         if (i < 0 || i >= totalWeight) {
-            throw new IndexOutOfBoundsException("");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (isLeaf()) {
             return data.charAt(i);   // return the char in leaf node
@@ -162,7 +162,7 @@ public final class Rope {
         // TODO - your code here
         int totalWeight = totalWeight();
         if (i < 0 || i > totalWeight) {
-            throw new IndexOutOfBoundsException("");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (i == 0) {
             return this;
@@ -199,7 +199,7 @@ public final class Rope {
         // TODO - your code here
         int total = totalWeight();
         if (i < 0 || i > total) {
-            throw new IndexOutOfBoundsException("");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (i == 0) {
             return null;
@@ -235,7 +235,7 @@ public final class Rope {
         // TODO - your code here
         int total = totalWeight();
         if (start < 0 || end < start || end > total) {
-            throw new IndexOutOfBoundsException("");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (start == end) {
             return null; //empty substring
@@ -258,7 +258,7 @@ public final class Rope {
         // TODO - your code here
         int total = totalWeight();
         if (i < 0 || i >= total) {
-            throw new IndexOutOfBoundsException("");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (isLeaf()) { 
             StringBuilder sb = new StringBuilder(data);
@@ -290,7 +290,7 @@ public final class Rope {
         // TODO - your code here
         int total = totalWeight();
         if (i < 0 || i >= total) {
-            throw new IndexOutOfBoundsException("");
+            throw new IndexOutOfBoundsException("Index out of bounds");
         }
         if (other == null) {
             return this;
