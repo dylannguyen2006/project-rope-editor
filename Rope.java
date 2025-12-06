@@ -1,4 +1,3 @@
-import java.lang.reflect.InaccessibleObjectException;
 import java.util.HashMap;
 
 public final class Rope {
@@ -18,7 +17,10 @@ public final class Rope {
      */
     public Rope(String data) {
         // TODO - your code here
-        if (data == null || data.length() == 0) {
+        if (data == null) {
+            throw new IllegalArgumentException("");
+        }
+        if (data.length() == 0) {
             throw new IllegalArgumentException("");
         }
         this.data = data;

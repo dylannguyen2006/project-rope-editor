@@ -75,17 +75,17 @@ public class Document {
             }
 
             String token = line.substring(i, j);
-            Rope piece = new Rope(token);
+            if (!token.isEmpty()) {
+                Rope piece = new Rope(token);
 
-            if (result == null) {
-                result = piece;
-            } else {
-                result = result.concat(piece);   // concatenate the new piece
+                if (result == null) {
+                    result = piece;
+                } else {
+                    result = result.concat(piece);   // concatenate the new piece
+                }
             }
-
             i = j;
         }
-
         return result;
     }
 
