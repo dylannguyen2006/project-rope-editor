@@ -26,18 +26,52 @@ public class View {
         gui.clear();
 
         int rows = document.rows();
-        for (int i = 0; i < rows; i++) {
-            Rope rope = document.get(i);
+        int screenHeight = gui.getScreenHeight();
+        int screenWidth = gui.getScreenWidth();
+
+        int maxRows = Math.min(rows, screenHeight);
+
+        for (int i = 0; i < maxRows; i++) {
             String line;
+            Rope rope = document.get(i);
+
             if (rope == null) {
                 line = "";
             } else {
                 line = rope.collect();
             }
 
-            for (int c = 0; c < line.length(); c++) {
-                gui.drawCharacter(i, c, line.charAt(c), "WHITE", "BLACK");   // default colors WHITE on BLACK
+            int maxCols = Math.min(line.length(), screenWidth);
+            for (int c = 0; c < maxCols; c++) {
+                char ch = (c < line.length()) ? line.charAt(c) : ' ';
+                gui.drawCharacter(c, i, ch, "WHITE", "BLACK");   
+                // default colors WHITE on BLACK
             }
+        }
+
+        if (rows == 0) {
+            row = 0;
+            col = 0;
+        } else {
+            if (row < 0) {
+                row = 0;
+            } else if (row >= rows) {
+                row = rows - 1;
+            }
+
+            int len = lineLength(row);
+            if (col < 0) {
+                col = 0;
+            } else if (col > len) { 
+                col = len;
+            }
+        }
+
+        if (row >= screenHeight && screenHeight > 0) {
+            row = screenHeight - 1;
+        }
+        if (col >= screenWidth && screenWidth > 0) {
+            col = screenWidth - 1;
         }
 
         gui.setCursorPosition(col, row);
@@ -70,8 +104,8 @@ public class View {
     // move cursor right
     public void moveRight() {
         // TODO - your code here
-        int lineLength = lineLength(row);
-        if (col < lineLength) {
+        int len = lineLength(row);
+        if (col < len) {
             col++;
         } else if (row < document.rows() - 1) {
             row++;
@@ -84,9 +118,9 @@ public class View {
         // TODO - your code here
         if (row > 0) {
             row--;
-            int lineLength = lineLength(row);
-            if (col > lineLength) {
-                col = lineLength;
+            int len = lineLength(row);
+            if (col > len) {
+                col = len;
             }
         }
     }
@@ -96,9 +130,9 @@ public class View {
         // TODO - your code here
         if (row < document.rows() - 1) {
             row++;
-            int lineLength = lineLength(row);
-            if (col > lineLength) {
-                col = lineLength;
+            int len = lineLength(row);
+            if (col > len) {
+                col = len;
             }
         }
     }
@@ -106,6 +140,11 @@ public class View {
     // insert a character at this screen position
     public void insert(char c) {
         // TODO - your code here
+        if (document.rows() == 0) {
+            document.add(new Rope(""));
+            row = 0;
+            col = 0;
+        }
         Rope line = document.get(row);
         Rope left = null;
         Rope right = null;
@@ -120,6 +159,7 @@ public class View {
         } else {
             newLine = mid;
         }
+
         if (right != null) {
             newLine = newLine.concat(right);
         }
@@ -130,9 +170,12 @@ public class View {
     // insert a line break
     public void linebreak() {
         // TODO - your code here
+        if (document.rows() == 0) {
+            document.add(new Rope(""));
+        }
         Rope line = document.get(row);
         if (line == null) {
-            document.add(row + 1, null);
+            document.add(row + 1, new Rope(""));
             row++;
             col = 0;
             return;
@@ -172,24 +215,21 @@ public class View {
             col--;
             return;
         }
+
         if (row == 0) {
             return;
         }
 
         Rope currLine = document.get(row);   // current line
         Rope prevLine = document.get(row - 1);   // previous line
-        Rope mergedLine;   // merged line after deletion
         if (prevLine == null) {
-            mergedLine = currLine;
+            prevLine = new Rope("");
         } else if (currLine == null) {
-            mergedLine = prevLine;
-        } else {
-            mergedLine = prevLine.concat(currLine);
+            currLine = new Rope("");
         }
-        int newCol = 0;
-        if (prevLine != null) {
-            newCol = prevLine.totalWeight();
-        } 
+        Rope mergedLine = prevLine.concat(currLine);
+        int newCol = prevLine.totalWeight();
+        
         document.set(row - 1, mergedLine);
         document.delete(row);   // delete current row
         row--;

@@ -128,7 +128,9 @@ public final class Rope {
         if (i < weight) {
             return left.charAt(i);   // get char from left rope
         } else {
-            return right.charAt(i - weight);   // get char from right rope. i - weight to adjust index
+            return right.charAt(i - weight); 
+            // get char from right rope.
+            //  i - weight to adjust index
         }
     }
 
@@ -176,8 +178,11 @@ public final class Rope {
                 return null;
             }
             return new Rope(sub);  
-        }
-        if (i < weight) {   // if i is in left rope, get tail from left rope and concatenate with right rope
+        }      
+        // if i is in left rope, get tail from
+        // left rope and concatenate with right rope
+
+        if (i < weight) {   
             Rope newLeft = left.tail(i);
             if (newLeft == null) {
                 return right;
