@@ -36,7 +36,7 @@ public class View {
             }
 
             for (int c = 0; c < line.length(); c++) {
-                gui.drawCharacter(c, i, line.charAt(c), "WHITE", "BLACK");   // default colors WHITE on BLACK
+                gui.drawCharacter(i, c, line.charAt(c), "WHITE", "BLACK");   // default colors WHITE on BLACK
             }
         }
 
