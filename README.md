@@ -2,8 +2,8 @@
 
 Rope Editor is a terminal-based text editor implemented in Java using the
 **rope data structure** to efficiently support text insertion and deletion.
-This project demonstrates how classical data structures are used in real-world
-applications such as text editors.
+This project demonstrates how classical data structures are applied in
+real-world software such as text editors.
 
 The editor follows the **Model–View–Controller (MVC)** architecture and renders
 a text-based user interface using the Lanterna library.
@@ -19,14 +19,14 @@ Instead of storing text as a contiguous array of characters (which makes
 insertions and deletions expensive), a rope:
 - Stores substrings in **leaf nodes**
 - Uses **internal nodes** to track subtree weights
-- Supports logarithmic-time operations for:
+- Supports efficient operations for:
   - character lookup
   - insertion
   - deletion
   - concatenation
 
-Ropes are **immutable** in this project: every modification returns a new rope,
-making reasoning and testing simpler.
+In this project, ropes are **immutable**: each modification returns a new rope,
+which simplifies reasoning, testing, and debugging.
 
 ---
 
@@ -50,8 +50,8 @@ making reasoning and testing simpler.
   - adding and removing lines
 
 ### Text Editor
-- Terminal-based UI
-- Cursor navigation (arrow keys)
+- Terminal-based user interface
+- Cursor navigation
 - Text insertion and deletion
 - Line splitting and joining
 - File saved on exit
@@ -61,19 +61,30 @@ making reasoning and testing simpler.
 ## 🏗️ Architecture (MVC)
 
 ### Model
-- **`Rope`**: immutable rope tree representing text
-- **`Document`**: list of ropes, one per line
+- **Rope**: immutable rope tree representing text
+- **Document**: list of ropes, one per line
 
 ### View
-- **`View`**: renders the visible portion of the document
+- **View**: renders the visible portion of the document
 - Handles cursor position and screen boundaries
 
 ### Controller
-- **`Editor`**: main control loop
+- **Editor**: main control loop
 - Processes user keystrokes
 - Coordinates updates between the model and the view
 
 ---
+## 🗂️ Project Structure
+.
+├── Rope.java # Rope data structure and operations
+├── Document.java # File model using ropes
+├── View.java # Screen rendering logic
+├── Editor.java # Main control loop
+├── Gui.java # Terminal drawing wrapper (Lanterna)
+├── Test/ # Unit tests
+├── Style/ # Style checks
+├── Makefile # Build and run targets
+└── README.md
 
 ## 🗂️ Project Structure
 
